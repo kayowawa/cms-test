@@ -1,0 +1,75 @@
+version: '3'
+services:
+  nginx:
+    container_name: nginx
+    build:
+      context: ./.docker/nginx
+      dockerfile: Dockerfile
+    ports:
+      - 80:80
+    tty: true
+    depends_on:
+      - web
+      - db
+
+  web:
+    container_name: web
+    build:
+      context: ./.docker/web
+      dockerfile: Dockerfile
+    environment:
+      PORT: '3000'
+      HOST: '0.0.0.0'
+    expose:
+      - 3000
+    volumes:
+      - ./web:/app
+    stdin_open: true
+    tty: true
+    # restart: always
+    depends_on:
+      - api
+      - db
+
+  api:
+    container_name: api
+    build:
+      context: ./.docker/api
+      dockerfile: Dockerfile
+    environment:
+      LANG: 'ja_JP.UTF-8'
+      TZ: 'Asia/Tokyo'
+    volumes:
+      - ./api:/app
+    expose:
+      - 9000
+    tty: true
+    # restart: always
+
+  db:
+    image: mysql:5.7
+    container_name: db-host
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: cms
+      MYSQL_USER: user
+      MYSQL_PASSWORD: pass
+      TZ: 'Asia/Tokyo'
+    command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    volumes:
+      - ./.docker/db/data:/var/lib/mysql
+      - ./.docker/db/my.cnf:/etc/mysql/conf.d/my.cnf
+      - ./.docker/db/sql:/docker-entrypoint-initdb.d
+    ports:
+      - 3306:3306
+
+  phpmyadmin:
+    container_name: phpmyadmin
+    image: phpmyadmin/phpmyadmin
+    environment:
+      - PMA_ARBITRARY=1
+      - PMA_HOSTS=db-host
+      - PMA_USER=root
+      - PMA_PASSWORD=root
+    ports:
+      - 8085:80
