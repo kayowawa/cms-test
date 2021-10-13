@@ -1,4 +1,4 @@
-## API:Laravel + FrontEnd:Nuxt(typescript)の環境構築
+## BackEnd:Laravel + FrontEnd:Nuxt(typescript)の環境構築
 
 ### 開発環境立ち上げ
 ```
