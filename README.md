@@ -1,5 +1,7 @@
 ## BackEnd:Laravel + FrontEnd:Nuxt(typescript)の環境構築
 
+### ENVは環境により適宜変更
+
 ### 開発環境立ち上げ
 ```
 $ docker-compose up -d
